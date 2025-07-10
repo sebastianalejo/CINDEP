@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Registros enviados</h2>
+<table class="table table-striped">
+    <tr><th>Inicio</th><th>Fin</th><th>Campo1</th><th>Campo2</th><th>Campo3</th></tr>
+    {% for r in registros %}
+    <tr>
+        <td>{{ r.fecha_inicio }}</td>
+        <td>{{ r.fecha_fin }}</td>
+        <td>{{ r.campo1 }}</td>
+        <td>{{ r.campo2 }}</td>
+        <td>{{ r.campo3 }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'logout' %}">Cerrar sesión</a>
+{% endblock %}
