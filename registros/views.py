@@ -1,23 +1,21 @@
 from django.shortcuts import render, redirect
 from .forms import RegistroForm
 from .models import Registro
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 import pandas as pd
 from django.http import HttpResponse
 from django.utils.timezone import make_naive
 import datetime
+from django.contrib.auth.models import User
 
 @login_required
 def panel(request):
-    form = RegistroForm()
-
-    # 👤 Si es superusuario, ve todos los registros
     if request.user.is_superuser:
-        registros = Registro.objects.all()
-    else:
-        registros = Registro.objects.filter(usuario=request.user)
+        return redirect('admin_panel')
 
-    # 📝 Si se envió el formulario
+    form = RegistroForm()
+    registros = Registro.objects.filter(usuario=request.user)
+
     if request.method == 'POST':
         form = RegistroForm(request.POST, request.FILES)
         if form.is_valid():
@@ -74,3 +72,14 @@ def exportar_excel(request):
     response['Content-Disposition'] = 'attachment; filename=registros.xlsx'
     df.to_excel(response, index=False, engine='openpyxl')
     return response
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def admin_panel(request):
+    registros = Registro.objects.select_related('usuario')
+    usuarios = User.objects.all()
+
+    return render(request, 'admin_panel.html', {
+        'registros': registros,
+        'usuarios': usuarios
+    })

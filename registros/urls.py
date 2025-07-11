@@ -7,4 +7,5 @@ urlpatterns = [
     path('panel/', views.panel, name='panel'),
     path('exportar_excel/', views.exportar_excel, name='exportar_excel'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('admin_panel/', views.admin_panel, name='admin_panel'),
 ]
